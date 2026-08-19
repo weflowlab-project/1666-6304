@@ -1,31 +1,48 @@
 import type { Metadata } from "next";
+import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import FloatingCallButton from "@/components/layout/FloatingCallButton";
 import { SITE } from "@/lib/menu";
 
 /**
  * 루트 레이아웃
  *
- * 원본 사이트(1666-6304.com)는 최상위가 <frameset> 이고 그 안의 default/index.php 가 실제 화면이다.
- * 모든 페이지 공통으로 상단 헤더(84px) + 하단 푸터(441px)가 붙으므로 루트 레이아웃에서 렌더링한다.
- * 페이지 폭은 1000px 고정, 좌우 여백은 원본이 배경 이미지(top_bg.gif 등)로 채우던 것을 흰색으로 대체.
+ * 구성: 상단 헤더(sticky) + 본문 + 푸터 + 전화 플로팅 버튼
+ *
+ * [변경 이력]
+ *   1차: 원본 대부업 사이트 이식 (1000px 고정폭, 좌우 여백을 배경 이미지로 채움)
+ *   2차: 렌터카로 내용 교체
+ *   3차: ← 지금. 화면 전체 폭을 쓰는 요즘 홈페이지 구조로 전환.
+ *        폰트도 시스템 돋움체 → Noto Sans KR (next/font 로 자체 호스팅, 외부 요청 없음)
  */
+const notoSansKr = Noto_Sans_KR({
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+  variable: "--font-noto-sans-kr",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: SITE.title,
-  description: `${SITE.name} – ${SITE.slogan}. 빠르고 간편한 자동차대출, 즉시대출 신용조회 무! ${SITE.phone}`,
+  title: {
+    default: `${SITE.name} | ${SITE.slogan}`,
+    template: `%s | ${SITE.name}`,
+  },
+  description: `${SITE.name} · 경기·서울 전 지역 렌터카 상담. 차종과 이용 기간만 말씀해 주시면 바로 안내해 드립니다. 전화 ${SITE.phone}`,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className="h-full">
-      <body className="flex min-h-full min-w-[1000px] flex-col bg-white">
-        {/* 상단 헤더: 로고 + 메뉴 + 고객센터 번호 */}
+    // data-scroll-behavior: globals.css 의 scroll-behavior:smooth 를 라우트 전환에서는 끄기 위한 표시
+    <html lang="ko" data-scroll-behavior="smooth" className={notoSansKr.variable}>
+      <body className="flex min-h-screen flex-col">
         <Header />
-        {/* 페이지 본문 */}
         <main className="flex-1">{children}</main>
-        {/* 하단 푸터: 회사정보 + 대부업 고지 */}
         <Footer />
+        {/* 전화 플로팅 버튼
+            PC: 항상 노출 / 모바일: 스크롤 중에만 노출되고 멈추면 오른쪽으로 빠진다 */}
+        <FloatingCallButton />
       </body>
     </html>
   );

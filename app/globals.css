@@ -1,68 +1,164 @@
 @import "tailwindcss";
 
 /*
- * 전역 스타일 – 원본 /default/img/style.css 를 옮긴 것
+ * 전역 스타일
  *
- *   td,table,body,p { font-family:돋움체; font-size:9pt; line-height:15pt; color:#666666; }
- *   A:link, a:visited { color:#000000; text-decoration:none }
- *   A:hover           { color:#0593B7; text-decoration:none }
- *   .major A:hover    { color:#ffffff }   .major1 A:hover { color:#FF6600 }
+ * [1차] 원본 대부업 사이트 스타일을 그대로 이식 (돋움체 9pt, 1000px 고정폭)
+ * [2차] 렌터카 업종 전환 – 내용 교체
+ * [3차] ← 지금. 화면 전체를 쓰는 요즘 홈페이지 형태로 현대화.
+ *        폰트를 시스템 돋움체에서 Noto Sans KR(next/font 로 자체 호스팅)로 바꾸고,
+ *        색·간격·모서리 값을 토큰으로 정리했다.
+ *
+ * 색 체계
+ *   원본의 남색(#1c3f7a) · 파랑(#3281C3) · 빨강(#e0322e) 정체성은 유지하되
+ *   명도 단계를 갖춰 배경/테두리/강조에 나눠 쓸 수 있게 확장했다.
+ *   강조색(빨강)은 전화 CTA 한 곳에만 쓴다 — 원본이 "정신없어" 보였던 주된 이유가
+ *   원색이 사방에 흩어져 시선이 분산된 것이었기 때문이다.
  */
+
+@theme {
+  /* 브랜드 남색 – 헤더·제목·푸터 */
+  --color-navy-50: #f2f6fb;
+  --color-navy-100: #e2ebf6;
+  --color-navy-200: #c3d6ec;
+  --color-navy-300: #92b4da;
+  --color-navy-400: #5b8cc4;
+  --color-navy-500: #3670ae;
+  --color-navy-600: #275792;
+  --color-navy-700: #1e4576;
+  --color-navy-800: #1c3f7a; /* 원본 로고 남색 */
+  --color-navy-900: #12294d;
+
+  /* 포인트 파랑 – 링크·아이콘·보조 강조 (원본 콘텐츠 박스 테두리색 계열) */
+  --color-sky-brand: #3281c3;
+
+  /* 강조 빨강 – 전화 CTA 전용 (원본 슬로건 색) */
+  --color-cta-50: #fdf2f1;
+  --color-cta-500: #e0322e;
+  --color-cta-600: #c4231f;
+
+  /* 중립 회색 */
+  --color-ink-500: #6b7280;
+  --color-ink-700: #3f4653;
+  --color-ink-900: #1f2937;
+
+  --font-sans: var(--font-noto-sans-kr), "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #666666;
-  --link: #000000;
-  --link-hover: #0593b7;
-  --brand-blue: #3281c3; /* 콘텐츠 박스 테두리 */
-  --brand-navy: #1c3f7a; /* 로고 */
-  --brand-red: #e0322e; /* 슬로건/강조 */
+  /* 헤더 높이 – 앵커 이동 시 헤더에 가리지 않도록 scroll-padding 에 사용 */
+  --header-h: 76px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
 }
 
-html,
-body {
-  background: var(--background);
-  color: var(--foreground);
-  /* 돋움체 9pt / 15pt – 시스템에 없는 경우 유사 고딕 폰트로 대체 */
-  font-family: "돋움체", DotumChe, "돋움", Dotum, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
-  font-size: 12px;
-  line-height: 20px;
+/*
+ * 기본 요소 스타일은 반드시 @layer base 안에 둔다.
+ * 레이어 밖에 쓰면 레이어에 속한 Tailwind 유틸리티보다 우선순위가 높아져
+ * <h2 class="text-white"> 같은 유틸리티가 먹지 않는다.
+ * (실제로 어두운 배경 섹션의 제목이 남색으로 찍혀 안 보이는 문제가 있었다)
+ */
+@layer base {
+  body {
+    background: #ffffff;
+    color: var(--color-ink-700);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    /* 한국어 줄바꿈: 어절(단어) 중간에서 끊지 않는다.
+       keep-all 이 없으면 "말씀해 주시면" 이 "말씀해 주시" / "면" 처럼 잘린다.
+       다만 URL 처럼 긴 문자열은 넘칠 수 있어 overflow-wrap 으로 보완한다. */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-navy-900);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* 누를 수 있는 요소에는 손가락 커서
+     (Tailwind 기본 리셋이 button 의 커서를 default 로 되돌리기 때문에 다시 지정한다) */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary {
+    cursor: pointer;
+  }
 }
 
-a {
-  color: var(--link);
-  text-decoration: none;
-}
-a:hover {
-  color: var(--link-hover);
-  text-decoration: none;
-}
-
-/* 원본 .major / .major1 (사용처는 거의 없으나 호환용) */
-.major a:hover {
-  color: #ffffff;
-}
-.major1 a:hover {
-  color: #ff6600;
-}
-
-/* 원본 폼 요소 기본 스타일: 1px #DADADA 테두리 */
-input[type="text"],
-input[type="password"],
-input[type="email"],
-textarea,
-select {
-  border: 1px solid #dadada;
-  background: #fff;
-  color: #333;
-  font: inherit;
-}
-
-/* 이미지 플레이스홀더 공통 (components/Placeholder.tsx) */
+/* 이미지 플레이스홀더 (components/Placeholder.tsx) */
 .ph {
   user-select: none;
+}
+
+/* ── 스크롤 진입 애니메이션 ───────────────────────────────
+   요즘 사이트에서 흔한 "스크롤하면 컨텐츠가 살짝 올라오며 나타나는" 효과.
+   자바스크립트 없이 CSS 만으로 처리하고,
+   동작 최소화를 선호하는 사용자(prefers-reduced-motion)에게는 적용하지 않는다. */
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 22%;
+  }
+}
+
+/* ── 전화 플로팅 버튼 흔들림 ─────────────────────────────
+   4초 주기로 앞부분(약 0.7초) 동안만 좌우로 흔들고 나머지 시간은 정지해 있는다.
+   "n초에 한 번씩 눈에 띄게" 라는 요구를 별도 타이머 없이 CSS 만으로 처리한 것.
+   버튼이 화면 밖으로 빠져 있을 때는 컴포넌트에서 call-wiggle 클래스를 떼어 흔들리지 않는다. */
+@keyframes callWiggle {
+  0%,
+  18%,
+  100% {
+    transform: rotate(0deg);
+  }
+  2% {
+    transform: rotate(-14deg);
+  }
+  5% {
+    transform: rotate(13deg);
+  }
+  8% {
+    transform: rotate(-11deg);
+  }
+  11% {
+    transform: rotate(9deg);
+  }
+  14% {
+    transform: rotate(-5deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .call-wiggle {
+    animation: callWiggle 4s ease-in-out infinite;
+  }
 }

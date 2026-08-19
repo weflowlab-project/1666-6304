@@ -3,24 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Placeholder from "@/components/Placeholder";
-import SmsQuickForm from "@/components/forms/SmsQuickForm";
+import CallBox from "@/components/layout/CallBox";
 import type { MenuSection } from "@/lib/menu";
 
 /**
- * 서브 페이지 좌측 사이드바 (원본: width 190px 컬럼)
+ * 서브 페이지 좌측 사이드바 (원본: width 190px 컬럼) – 원본 틀 유지
  *
  * 원본 구조
  *   [title_0X.gif 190x58]  ← 섹션명 이미지 ("자/동/차/대/출" 처럼 슬래시 구분, 파란 글씨, 회색 테두리 박스)
  *   [left_menu_bg.gif 배경]
  *     [0X_left_menu_01.gif 190x23] ← "› 개인차" 같은 메뉴 이미지, 각각 <a> 링크
- *     ...
  *   [left_menu_down.gif 190x8]     ← 박스 하단 마감 이미지
  *   (7px 여백)
- *   [SMS 빠른상담신청 폼]
+ *   [SMS 빠른상담신청 폼 190x256]
  *
- * 인터랙션
- *   - 메뉴 클릭 → 해당 페이지 이동. 원본은 이미지라 hover/활성 표시가 없었으나
- *     여기서는 현재 페이지를 파란색·굵게 표시하고 hover 시 색상 변경(style.css A:hover #0593B7)을 추가.
+ * ⚠️ 변경: 맨 아래 SMS 상담 폼을 제거하고 전화 안내 박스로 교체했다.
+ *    요금 비공개 · 예약폼 없음 정책이라 전화가 유일한 상담 경로이기 때문이다.
+ *    (원본은 SMS폼 · 상단 빠른신청 배너 · 채팅 아이콘 · 대출신청 버튼까지
+ *     상담 진입점이 4개로 흩어져 있어 어디를 눌러야 할지 알기 어려웠다)
  */
 export default function Sidebar({ section }: { section: MenuSection }) {
   const pathname = usePathname();
@@ -57,9 +57,9 @@ export default function Sidebar({ section }: { section: MenuSection }) {
       {/* left_menu_down.gif (190x8) – 박스 하단 마감 */}
       <div className="h-[8px] w-[190px] rounded-b-[4px] border-x border-b border-[#d6d6d6] bg-white" />
 
-      {/* 7px 여백 후 SMS 폼 */}
+      {/* 7px 여백 후 전화 상담 박스 (원본 SMS 폼 자리) */}
       <div className="h-[7px]" />
-      <SmsQuickForm />
+      <CallBox />
     </aside>
   );
 }

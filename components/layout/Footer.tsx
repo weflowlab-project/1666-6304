@@ -1,57 +1,80 @@
 import Link from "next/link";
-import { SITE } from "@/lib/menu";
+import { MENU, SITE } from "@/lib/menu";
 
 /**
- * 하단 푸터 (원본: bm_copyright_img.gif 1000x441 통이미지 + 로고 부분 이미지맵 → 홈 링크)
+ * 하단 푸터
  *
- * 원본 이미지의 텍스트를 그대로 옮겼다. 좌측 상단 로고(3,22,222,77)를 클릭하면 홈으로 이동.
- * 배경: 상단에 1px 회색 라인(#e1e1e1, bm_copy_bg.gif) 이후 흰색.
- * 마지막 문단(과도한 빚 경고문)은 원본에서 파란색(#2c63b8 계열)으로 강조.
+ * [1차] 원본: bm_copyright_img.gif 1000x441 통이미지. 내용의 대부분이 대부업 법정 고지였다.
+ * [2차] 대부업 고지 제거 + 렌터카 사업자 정보로 교체
+ * [3차] ← 지금. 화면 전체 폭을 쓰는 요즘 푸터 구조(3열: 상호·연락 / 메뉴 / 안내)로 재구성.
+ *
+ * ⚠️ 삭제한 대부업 문구 (되살리면 안 됨)
+ *      대부업 등록번호 / 대출금리 · 연체금리 고지 / 총 대출비용 예시 /
+ *      "과도한 빚은 당신에게 큰 불행을 안겨 줄 수 있고…" 경고문
+ * ⚠️ 렌터카는 여객자동차 운수사업법상 "자동차대여사업 등록번호" 표기가 필요하다.
+ *    SITE.business 값이 전부 자리표시이므로 실제 정보를 받아 채워야 한다.
  */
 export default function Footer() {
+  const b = SITE.business;
+  const telHref = `tel:${SITE.phone.replace(/-/g, "")}`;
+
   return (
-    <footer className="w-full border-t border-[#e1e1e1] bg-white">
-      <div className="mx-auto w-[1000px] px-[30px] py-[24px] text-[12px] leading-[19px] text-[#555]">
-        {/* 상단: 로고 + 회사 정보 */}
-        <div className="flex items-start">
-          {/* 로고 – 원본 이미지맵 영역(3,22,222,77) 클릭 시 홈 이동 */}
-          <Link
-            href="/"
-            className="mr-[40px] mt-[4px] block w-[180px] shrink-0 text-[26px] font-extrabold leading-none tracking-tight text-[#1c3f7a] no-underline"
-          >
-            {SITE.name}
-          </Link>
-          <div className="text-[11px] leading-[17px] text-[#777]">
-            본사주소 : 경기도 평택시 점촌로 23번길 24 102호 / 대부업 등록번호 : 2021 - 경기 평택 - 0010호
-            <br />
-            대표자 : 신경애 / 대표전화 : {SITE.phone} / 사업자번호 : 642-90-01634 / 회사명 : {SITE.name}
-            <br />
-            Copyright(c) 2011 {SITE.name} All rights reserved.
+    <footer className="border-t border-navy-100 bg-navy-50/60">
+      <div className="mx-auto w-full max-w-[1280px] px-5 py-14 lg:px-8 lg:py-16">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 lg:gap-14">
+          {/* 상호 + 대표번호 */}
+          <div>
+            <Link href="/" className="text-[22px] font-black tracking-tight text-navy-800">
+              {SITE.name}
+            </Link>
+            <p className="mt-2 text-[14px] text-ink-500">{SITE.slogan}</p>
+            <a href={telHref} className="mt-6 block text-[30px] font-black leading-none tracking-tight text-navy-800">
+              {SITE.phone}
+            </a>
+            <p className="mt-2.5 text-[13px] text-ink-500">{SITE.hours}</p>
+          </div>
+
+          {/* 메뉴 */}
+          <nav aria-label="푸터 메뉴">
+            <p className="text-[13px] font-bold text-navy-900">바로가기</p>
+            <ul className="mt-4 space-y-2.5">
+              {MENU.map((m) => (
+                <li key={m.id}>
+                  <Link href={m.href} className="text-[15px] text-ink-500 transition-colors hover:text-navy-700">
+                    {m.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* 안내 문구 – 요금 비공개 정책 설명 */}
+          <div>
+            <p className="text-[13px] font-bold text-navy-900">이용 안내</p>
+            {/* 지정된 위치에서 줄바꿈 */}
+            <p className="mt-4 text-[14px] leading-relaxed text-ink-500">
+              대여 요금은 차종과 이용 기간, 보험 조건에 따라 달라집니다.
+              <br />
+              전화 주시면 조건에 맞는 차량과 요금을 바로 안내해 드립니다.
+            </p>
+            <p className="mt-3 text-[14px] leading-relaxed text-ink-500">
+              보유 차량은 수시로 변동되며, 홈페이지에 표시된 차량이
+              <br />
+              대여 중일 수 있습니다.
+            </p>
           </div>
         </div>
 
-        {/* 대부업 필수 고지 문구 (원본 이미지 본문) */}
-        <div className="mt-[22px] pl-[70px] text-[13px] leading-[21px] text-[#444]">
+        {/* 사업자 정보 – ⚠️ TODO: 실제 정보로 교체 */}
+        <div className="mt-12 border-t border-navy-100 pt-7 text-[13px] leading-relaxed text-ink-500">
           <p>
-            대표전화:{SITE.phone} 대출금리: 최저 월 0.6%~ 최대 1.6%이내(최대 연 20%이내, 신용도에 따라 차등적용)|
-            연체금리:약정이자율+3%P이내, 연 20%이내. 채무의 조기상환 조건 및 부대비용 없음.단, 담보대출은 최대
-            3%이내 중도상환수수료, 담보권설정비용 발생|부대비용:등록면허세, 지방교육세, 등기신청수수료,
-            국민주택채권매입금액 및 근저당권해지비용|상환 기간:최단 12개월~최장 60개월 이하|중도상환:중도상환가능,
-            중도상환 시 수수료 발생 할 수 있으며, 대출상품에 따라 달라질 수 있습니다. 이자 외 별도로 중개수수료를
-            요구하거나 받는 것은 불법입니다.
+            상호 : {SITE.name} · 대표자 : {b.ceo} · 사업자등록번호 : {b.regNo}
           </p>
-          <p className="mt-[18px]">
-            총 대출 비용 예시:1000만원을 12개월 기간 동안 금리 연 20% 적용하여 원리금균등상환방법으로 이용하는 경우
-            총 상환금액 11,116,141원 (개인 대출 상품 및 상환방법에 따라 달라질 수 있습니다.) 단, 연체대출금보유자,
-            불건전대출이 있는 자 등은 대출취급이 제한. 일정기간 납부해야 할 원리금이 연체될 경우에 계약만료 기한이
-            도래하기 전에 모든 원리금을 변제해야 할 의무가 발생할 수 있습니다. 일반금융소비자는 금융판매사업자로부터
-            충분히 설명을 받을 권리가 있으며, 설명 내용을 이해하신 후 계약 및 금융상품체결 전에 금융상품설명서 및 약관을
-            읽어 보시기 바랍니다.
+          <p>
+            주소 : {b.address} · 자동차대여사업 등록번호 : {b.rentalLicense}
           </p>
-          {/* 경고 문구 – 원본에서 파란색 강조 */}
-          <p className="mt-[18px] text-[#2c63b8]">
-            과도한 빚은 당신에게 큰 불행을 안겨 줄 수 있고, 상환능력에 비해 대출금이 과도할 경우 귀하의 신용등급 또는
-            개인신용평점이 하락할 수 있으며, 신용등급 또는 신용평점 하락으로 다른 금융거래가 제약 받을 수 있습니다.
+          <p className="mt-4 text-ink-500/70">
+            © {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </p>
         </div>
       </div>
