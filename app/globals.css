@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
+/*
+ * 전역 스타일 – 원본 /default/img/style.css 를 옮긴 것
+ *
+ *   td,table,body,p { font-family:돋움체; font-size:9pt; line-height:15pt; color:#666666; }
+ *   A:link, a:visited { color:#000000; text-decoration:none }
+ *   A:hover           { color:#0593B7; text-decoration:none }
+ *   .major A:hover    { color:#ffffff }   .major1 A:hover { color:#FF6600 }
+ */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #666666;
+  --link: #000000;
+  --link-hover: #0593b7;
+  --brand-blue: #3281c3; /* 콘텐츠 박스 테두리 */
+  --brand-navy: #1c3f7a; /* 로고 */
+  --brand-red: #e0322e; /* 슬로건/강조 */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* 돋움체 9pt / 15pt – 시스템에 없는 경우 유사 고딕 폰트로 대체 */
+  font-family: "돋움체", DotumChe, "돋움", Dotum, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--link-hover);
+  text-decoration: none;
+}
+
+/* 원본 .major / .major1 (사용처는 거의 없으나 호환용) */
+.major a:hover {
+  color: #ffffff;
+}
+.major1 a:hover {
+  color: #ff6600;
+}
+
+/* 원본 폼 요소 기본 스타일: 1px #DADADA 테두리 */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+select {
+  border: 1px solid #dadada;
+  background: #fff;
+  color: #333;
+  font: inherit;
+}
+
+/* 이미지 플레이스홀더 공통 (components/Placeholder.tsx) */
+.ph {
+  user-select: none;
 }
