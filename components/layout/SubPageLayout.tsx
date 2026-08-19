@@ -1,93 +1,92 @@
 import type { ReactNode } from "react";
-import Placeholder from "@/components/Placeholder";
 import Sidebar from "@/components/layout/Sidebar";
+import CallBox from "@/components/layout/CallBox";
 import TopBanners from "@/components/layout/TopBanners";
 import { getSection, type MenuSection } from "@/lib/menu";
 
 /**
  * 서브 페이지 공통 레이아웃 (홈 제외 모든 페이지)
  *
- * 원본 구조 (세로 순서, 1000px 고정폭, 좌우 여백은 배경 이미지로 채움)
- *   1. 헤더(84px)                       ← app/layout.tsx 의 <Header/>
- *   2. 서브 비주얼 sub_flash_01.jpg 1000x196  (원본: "빠르고 간편한 자동차 대출! / 즉시대출 신용조회 무!!")
- *   3. 49px 여백 스트립(bm_bg.gif)
- *   4. 본문 2컬럼
- *        좌: 221px 컬럼 안에 190px 사이드바(섹션 타이틀 + 좌측 메뉴 + 전화상담 박스)
- *        우: 779px 컬럼 – 상단 3단 배너 → 7px → 파란 테두리(2px #3281C3) 콘텐츠 박스(770px)
- *              박스 내부: [› 아이콘 26x15][페이지 제목(굵은 검정 16px)]
- *                          [center_copy.gif 293x15 – 원본 "차만 있으시면 무조건 대출이 가능합니다!"]
- *                          [730px 본문 = children]
- *   5. 푸터                            ← app/layout.tsx 의 <Footer/>
+ * 원본 구조 (1000px 고정폭)
+ *   1. 서브 비주얼 1000x196
+ *   2. 본문 2컬럼 – 좌 190px 사이드바 / 우 779px (상단 3단 배너 + 파란 테두리 콘텐츠 박스)
  *
- * ⚠️ 업종 전환 변경 (레이아웃은 원본 그대로, 내용만 교체)
- *    · 서브 비주얼 문구: 대출 → 렌터카
- *    · 사이드바 SMS 폼 → 전화 상담 박스
- *    · 우측 여백의 채팅상담 아이콘 제거 (상담 경로를 전화 하나로 통일)
- *    · 콘텐츠 박스 부제: "차만 있으시면 무조건 대출이…" → 렌터카 문구
+ * 변경
+ *   · 이미지 자리 표시 제거 (서브 비주얼은 배경에 안내 문구만 크게)
+ *   · 1000px 고정 → 반응형
+ *
+ * 반응형 처리
+ *   · lg 이상: 원본과 같은 좌 사이드바 + 우 본문 2컬럼
+ *   · lg 미만: 사이드바(타이틀 + 가로 칩 메뉴)가 위로, 본문이 아래로 쌓이고
+ *     전화 상담 박스는 본문 맨 아래에 한 번만 보여준다.
  */
 export default function SubPageLayout({
   sectionId,
   title,
   children,
 }: {
-  /** 사이드바에 표시할 섹션 */
   sectionId: MenuSection["id"];
-  /** 콘텐츠 박스 제목 (예: "개인차", "회사소개", "공지사항") */
+  /** 콘텐츠 박스 제목 */
   title: string;
   children: ReactNode;
 }) {
   const section = getSection(sectionId);
 
   return (
-    <div className="relative mx-auto w-[1000px]">
-      {/* 2. 서브 비주얼 배너 (1000x196) – 좌우 여백은 sub_flash_left/right_bg.gif(연회색 그라데이션) */}
-      <Placeholder width={1000} height={196} note="sub_flash_01.jpg" tone="light" align="left">
-        <div className="pl-[360px]">
-          <div className="text-[24px] font-bold text-[#e0322e]">필요한 기간만큼, 합리적인 렌터카!</div>
-          <div className="text-[22px] font-bold text-[#1c5aa8]">차종·기간 상담은 전화 한 통이면 끝!</div>
-          <div className="mt-1 text-[11px] text-[#999]">(차량 이미지 배경 – TODO: 실제 사진으로 교체)</div>
+    <div className="w-full">
+      {/* ── 서브 비주얼 (원본 sub_flash_01.jpg 1000x196 자리) ── */}
+      <section className="relative isolate flex min-h-[140px] w-full items-center justify-center overflow-hidden bg-[#eef3f8] px-4 py-10 text-center sm:min-h-[170px]">
+        {/* 배경 – 이미지가 들어갈 자리 안내 */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 flex select-none items-center justify-center whitespace-nowrap text-[34px] font-black tracking-tight text-[#1c3f7a]/[0.08] sm:text-[52px] md:text-[72px]"
+        >
+          이미지 삽입 예정
+        </span>
+        <div className="relative">
+          <p className="text-[19px] font-bold leading-[1.4] text-[#e0322e] sm:text-[23px]">
+            필요한 기간만큼, 합리적인 렌터카!
+          </p>
+          <p className="mt-1 text-[16px] font-bold text-[#1c5aa8] sm:text-[20px]">
+            차종·기간 상담은 전화 한 통이면 끝!
+          </p>
         </div>
-      </Placeholder>
+      </section>
 
-      {/* 3. 49px 여백 스트립 */}
-      <div className="h-[49px]" />
+      {/* ── 본문 ── */}
+      <div className="mx-auto w-full max-w-[1000px] px-4 py-6 md:py-8">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+          <Sidebar section={section} />
 
+          <div className="min-w-0 flex-1">
+            <TopBanners />
 
-      {/* 4. 본문 2컬럼 */}
-      <div className="flex items-start">
-        <Sidebar section={section} />
-
-        <div className="w-[779px]">
-          <TopBanners />
-          <div className="h-[7px]" />
-
-          {/* 파란 테두리 콘텐츠 박스 (원본 table cellspacing=2 bgcolor=#3281C3 → 2px 파란 테두리) */}
-          <section className="w-[770px] border-2 border-[#3281C3] bg-white">
-            <div className="mx-auto w-[760px] pt-[7px]">
-              {/* 제목 행: › 아이콘 + 굵은 제목 */}
-              <div className="flex w-[575px] items-center">
-                <Placeholder width={26} height={15} note="center_title_icon.gif" tone="blue">
-                  <span className="text-[11px] font-bold leading-none text-[#1c5aa8]">›</span>
-                </Placeholder>
-                <h2 className="m-0 ml-0 text-[16px] font-bold text-black">{title}</h2>
+            {/* 파란 테두리 콘텐츠 박스 – 원본의 2px #3281C3 테두리 유지 */}
+            <section className="mt-4 w-full rounded-[4px] border-2 border-[#3281C3] bg-white px-4 py-4 md:px-5 md:py-5">
+              {/* 제목 + 부제 */}
+              <div className="border-b border-[#eee] pb-3">
+                <h1 className="flex items-center gap-1.5 text-[18px] font-bold text-black md:text-[20px]">
+                  <span className="text-[#1c5aa8]" aria-hidden>
+                    ›
+                  </span>
+                  {title}
+                </h1>
+                <p className="mt-1 text-[12px] text-[#777]">
+                  차종과 이용 기간만 말씀해 주시면 바로 안내해 드립니다.
+                </p>
               </div>
-              {/* 공통 카피 이미지 center_copy.gif (293x15) */}
-              <Placeholder width={293} height={15} note="center_copy.gif" tone="none" align="left">
-                <span className="text-[11px] text-[#777]">차종과 이용 기간만 말씀해 주시면 바로 안내해 드립니다.</span>
-              </Placeholder>
+
+              {/* 본문 */}
+              <div className="pt-4">{children}</div>
+            </section>
+
+            {/* 전화 상담 박스 – lg 미만에서는 본문 아래에 한 번만 */}
+            <div className="mt-5 flex justify-center lg:hidden">
+              <CallBox />
             </div>
-
-            {/* 여백 행 */}
-            <div className="h-[15px]" />
-
-            {/* 730px 본문 */}
-            <div className="mx-auto w-[730px] pb-[15px]">{children}</div>
-          </section>
+          </div>
         </div>
       </div>
-
-      {/* 하단 여백 (원본 &nbsp; 행) */}
-      <div className="h-[18px]" />
     </div>
   );
 }

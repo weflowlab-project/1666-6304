@@ -1,24 +1,22 @@
-import Placeholder from "@/components/Placeholder";
 import { SITE } from "@/lib/menu";
 
 /**
- * 2열 정보표 + 전화 CTA 버튼 (원본 대출 조건표 컴포넌트를 그대로 재사용)
+ * 2열 정보표 + 전화 CTA 버튼
  *
- * 원본 마크업 (틀 그대로 유지)
- *   <table width="730" cellpadding="5" cellspacing="1" bgcolor="E4E4E4">   ← 1px 연회색 격자
- *     <tr><td width="180" align="center" bgcolor="#FFFFFF"><strong>대상</strong></td>
- *         <td bgcolor="#FFFFFF">만 20세 ~</td></tr> ...
- *   </table>
- *   <a href="…sub_04_01.php"><img sub_daechul_bm_bt.gif 205x55 "대출신청하기"></a>  ← 가운데 정렬
+ * 원본(대부업) 대출 조건표의 구조를 이어받았다.
+ *   <table cellpadding="5" cellspacing="1" bgcolor="E4E4E4">  ← 1px 연회색 격자
+ *     <tr><td width="180" align="center"><strong>항목</strong></td><td>내용</td></tr>
  *
- * ⚠️ 업종 전환 변경
- *    · 표 구조·격자·크기는 원본 그대로. 담기는 항목만 대출 조건 → 차량/이용 정보로 바뀐다.
- *    · CTA 버튼: "대출신청하기" → "전화 상담하기". 링크도 상담폼(/consult)이 아니라 tel: 로 연결.
- *      요금 비공개·예약폼 없음 정책이라 전화가 유일한 전환 지점이다.
+ * 변경 이력
+ *   · 담기는 항목: 대출 조건 → 차량/이용 정보
+ *   · CTA: "대출신청하기"(상담폼) → "전화 상담하기"(tel:) — 요금 비공개·전화 문의 정책
+ *   · 폭: 730px 고정 → 부모에 맞춤(w-full). 모바일 대응을 위해 고정폭을 없앴다.
+ *   · 모바일에서는 2열 표가 좁아 읽기 어려우므로, 640px 미만에서는
+ *     항목명을 위, 내용을 아래로 쌓아 보여준다.
  */
 
 export type InfoRow = {
-  /** 좌측 항목명 (180px, 가운데 정렬, 굵게) */
+  /** 좌측 항목명 */
   label: string;
   /** 우측 내용 – 배열 요소마다 줄바꿈 */
   value: string[];
@@ -30,61 +28,55 @@ export type InfoSection = {
   rows: InfoRow[];
 };
 
-/**
- * 2열 표 – 좌 180px 항목명 / 우 내용, 1px #E4E4E4 격자, 셀 패딩 5px
- * 폭은 부모에 맞춘다(w-full). 원본은 730px 고정이었으나, 차량 사진과 나란히 놓는 경우
- * 고정폭이면 사진 자리를 밀어내 찌그러지므로 부모가 폭을 정하도록 바꿨다.
- */
+/** 2열 표 – PC: 좌 180px 항목 / 우 내용, 모바일: 위아래로 쌓임 */
 export function InfoTable({ rows }: { rows: InfoRow[] }) {
   return (
-    <table className="w-full border-separate border-spacing-[1px] bg-[#E4E4E4] text-[12px] leading-[20px] text-[#666]">
-      <tbody>
-        {rows.map((row) => (
-          <tr key={row.label}>
-            <th scope="row" className="w-[180px] bg-white p-[5px] text-center font-bold">
-              {row.label}
-            </th>
-            <td className="whitespace-pre-wrap bg-white p-[5px] text-left">
-              {row.value.map((line, i) => (
-                <span key={i}>
-                  {line || " "}
-                  {i < row.value.length - 1 && <br />}
-                </span>
-              ))}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <dl className="w-full overflow-hidden rounded-[4px] border border-[#E4E4E4] text-[13px] leading-[1.7] text-[#666]">
+      {rows.map((row, i) => (
+        <div
+          key={row.label}
+          className={`flex flex-col sm:flex-row ${i > 0 ? "border-t border-[#E4E4E4]" : ""}`}
+        >
+          <dt className="bg-[#f7f9fb] px-3 py-2 font-bold text-[#444] sm:w-[180px] sm:shrink-0 sm:border-r sm:border-[#E4E4E4] sm:text-center">
+            {row.label}
+          </dt>
+          <dd className="m-0 min-w-0 flex-1 bg-white px-3 py-2">
+            {row.value.map((line, j) => (
+              <span key={j} className="block">
+                {line || " "}
+              </span>
+            ))}
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
-/** "전화 상담하기" 버튼 – 원본 sub_daechul_bm_bt.gif(205x55, 파란 광택) 자리 */
+/** "전화 상담하기" 버튼 – 원본의 파란 광택 이미지 버튼을 실제 버튼으로 대체 */
 export function CallCtaButton() {
   return (
-    <a href={`tel:${SITE.phone.replace(/-/g, "")}`} className="block no-underline" aria-label="전화 상담하기">
-      <Placeholder
-        width={205}
-        height={55}
-        tone="dark"
-        note="sub_daechul_bm_bt.gif"
-        className="rounded-[6px] !border-solid !border-[#066593] !bg-gradient-to-b !from-[#1a86ad] !to-[#095384]"
-      >
-        <span className="text-[18px] font-bold text-white drop-shadow">전화 상담하기</span>
-        <span className="text-[13px] font-bold text-white/90">{SITE.phone}</span>
-      </Placeholder>
+    <a
+      href={`tel:${SITE.phone.replace(/-/g, "")}`}
+      className="inline-flex h-[54px] w-full max-w-[280px] items-center justify-center gap-2 rounded-[6px] bg-gradient-to-b from-[#1a86ad] to-[#095384] px-6 text-white shadow-sm transition-opacity hover:opacity-90"
+      aria-label={`전화 상담하기 ${SITE.phone}`}
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden>
+        <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2z" />
+      </svg>
+      <span className="text-[17px] font-bold">전화 상담하기</span>
     </a>
   );
 }
 
-/** 표 + CTA 버튼을 묶은 본문 (원본 LoanConditions 와 동일한 구성) */
+/** 표 + CTA 버튼 묶음 */
 export default function InfoSections({ sections }: { sections: InfoSection[] }) {
   return (
-    <div className="w-[730px]">
+    <div className="w-full">
       {sections.map((section, i) => (
         <div key={i}>
           {section.subheading && (
-            <div className="mb-[3px] mt-[10px] text-[13px] font-bold text-black">{section.subheading}</div>
+            <div className="mb-[5px] mt-[10px] text-[14px] font-bold text-black">{section.subheading}</div>
           )}
           <InfoTable rows={section.rows} />
           <div className="h-[20px]" />

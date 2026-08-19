@@ -2,64 +2,86 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Placeholder from "@/components/Placeholder";
 import CallBox from "@/components/layout/CallBox";
 import type { MenuSection } from "@/lib/menu";
 
 /**
- * 서브 페이지 좌측 사이드바 (원본: width 190px 컬럼) – 원본 틀 유지
+ * 서브 페이지 좌측 사이드바
  *
- * 원본 구조
- *   [title_0X.gif 190x58]  ← 섹션명 이미지 ("자/동/차/대/출" 처럼 슬래시 구분, 파란 글씨, 회색 테두리 박스)
- *   [left_menu_bg.gif 배경]
- *     [0X_left_menu_01.gif 190x23] ← "› 개인차" 같은 메뉴 이미지, 각각 <a> 링크
- *   [left_menu_down.gif 190x8]     ← 박스 하단 마감 이미지
- *   (7px 여백)
- *   [SMS 빠른상담신청 폼 190x256]
+ * 원본은 190px 컬럼에 [섹션 타이틀 이미지] + [메뉴 이미지들] + [SMS 상담폼] 이 세로로 놓였다.
  *
- * ⚠️ 변경: 맨 아래 SMS 상담 폼을 제거하고 전화 안내 박스로 교체했다.
- *    요금 비공개 · 예약폼 없음 정책이라 전화가 유일한 상담 경로이기 때문이다.
- *    (원본은 SMS폼 · 상단 빠른신청 배너 · 채팅 아이콘 · 대출신청 버튼까지
- *     상담 진입점이 4개로 흩어져 있어 어디를 눌러야 할지 알기 어려웠다)
+ * 변경
+ *   · 타이틀·메뉴 이미지 자리 표시 제거 → 실제 텍스트
+ *   · SMS 폼 → 전화 상담 박스
+ *   · 190px 고정 → 반응형
+ *
+ * 반응형 처리
+ *   · lg 이상: 원본처럼 세로 사이드바
+ *   · lg 미만: 섹션 타이틀 + 하위 메뉴를 가로 칩 목록으로 보여준다.
+ *     좁은 화면에서 세로 메뉴를 본문 위에 두면 본문이 한참 아래로 밀리기 때문이다.
+ *     전화 상담 박스는 본문 아래(SubPageLayout)에서 따로 보여준다.
  */
 export default function Sidebar({ section }: { section: MenuSection }) {
   const pathname = usePathname();
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <aside className="flex w-[221px] shrink-0 flex-col items-center pt-[0px]">
-      {/* 섹션 타이틀 이미지 title_0X.gif (190x58) */}
-      <Placeholder width={190} height={58} note={`title_${section.id}.gif`} tone="light">
-        <span className="text-[17px] font-bold tracking-wider text-[#1c5aa8]">{section.sidebarTitle}</span>
-      </Placeholder>
+    <aside className="w-full lg:w-[190px] lg:shrink-0">
+      {/* 섹션 타이틀 – 원본 title_0X.gif 자리 */}
+      <p className="rounded-t-[4px] border border-[#d6d6d6] bg-[#f7f9fb] py-3 text-center text-[16px] font-bold tracking-wider text-[#1c5aa8] lg:py-4 lg:text-[17px]">
+        {section.sidebarTitle}
+      </p>
 
-      {/* 좌측 메뉴 목록 – 원본 0X_left_menu_NN.gif (190x23 each) + left_menu_down.gif */}
-      <nav className="w-[190px] border-x border-[#d6d6d6] bg-white" aria-label={`${section.label} 하위 메뉴`}>
+      {/* 하위 메뉴 – lg 이상 세로 목록 */}
+      <nav
+        className="hidden rounded-b-[4px] border-x border-b border-[#d6d6d6] bg-white lg:block"
+        aria-label={`${section.label} 하위 메뉴`}
+      >
         <ul className="m-0 list-none p-0">
-          {section.children.map((child) => {
-            const active = pathname === child.href || pathname.startsWith(child.href + "/");
-            return (
-              <li key={child.href} className="border-b border-dotted border-[#cfcfcf] last:border-b-0">
-                <Link
-                  href={child.href}
-                  className={`flex h-[23px] items-center pl-[14px] text-[12px] no-underline hover:text-[#0593B7] ${
-                    active ? "font-bold text-[#0593B7]" : "text-[#333]"
-                  }`}
-                >
-                  {/* 원본 이미지의 "›" 불릿 */}
-                  <span className="mr-[6px] text-[#1c5aa8]">›</span>
-                  {child.label}
-                </Link>
-              </li>
-            );
-          })}
+          {section.children.map((child) => (
+            <li key={child.href} className="border-b border-dotted border-[#cfcfcf] last:border-b-0">
+              <Link
+                href={child.href}
+                className={`flex items-center px-3 py-2 text-[13px] hover:text-[#0593B7] ${
+                  isActive(child.href) ? "font-bold text-[#0593B7]" : "text-[#333]"
+                }`}
+              >
+                <span className="mr-1.5 text-[#1c5aa8]" aria-hidden>
+                  ›
+                </span>
+                {child.label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
-      {/* left_menu_down.gif (190x8) – 박스 하단 마감 */}
-      <div className="h-[8px] w-[190px] rounded-b-[4px] border-x border-b border-[#d6d6d6] bg-white" />
 
-      {/* 7px 여백 후 전화 상담 박스 (원본 SMS 폼 자리) */}
-      <div className="h-[7px]" />
-      <CallBox />
+      {/* 하위 메뉴 – lg 미만 가로 칩 (하위가 2개 이상일 때만 의미가 있다) */}
+      {section.children.length > 1 && (
+        <nav
+          className="flex flex-wrap gap-2 rounded-b-[4px] border-x border-b border-[#d6d6d6] bg-white p-3 lg:hidden"
+          aria-label={`${section.label} 하위 메뉴`}
+        >
+          {section.children.map((child) => (
+            <Link
+              key={child.href}
+              href={child.href}
+              className={`inline-block rounded-full border px-3 py-1 text-[13px] ${
+                isActive(child.href)
+                  ? "border-[#0593B7] bg-[#eaf4fd] font-bold text-[#0593B7]"
+                  : "border-[#ddd] text-[#666]"
+              }`}
+            >
+              {child.label}
+            </Link>
+          ))}
+        </nav>
+      )}
+
+      {/* 전화 상담 박스 – lg 이상에서만 사이드에 붙는다 */}
+      <div className="mt-3 hidden lg:block">
+        <CallBox />
+      </div>
     </aside>
   );
 }

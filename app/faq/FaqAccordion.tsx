@@ -37,7 +37,7 @@ export default function FaqAccordion() {
   const visible = activeCategory === "all" ? groups : groups.filter((g) => g.category.id === activeCategory);
 
   return (
-    <div className="w-[730px]">
+    <div className="w-full">
       {/* 카테고리 필터 */}
       <div className="mb-[14px] flex flex-wrap gap-[4px]">
         <FilterButton active={activeCategory === "all"} onClick={() => setActiveCategory("all")}>

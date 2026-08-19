@@ -57,7 +57,7 @@ function Todo() {
 /** 목록형 안내 (점 불릿) */
 function NoteList({ items }: { items: readonly string[] }) {
   return (
-    <ul className="mt-[8px] list-none p-0 text-[12px] leading-[20px] text-[#666]">
+    <ul className="mt-[8px] list-none p-0 text-[13px] leading-[1.7] text-[#666]">
       {items.map((t) => (
         <li key={t} className="flex">
           <span className="mr-[5px] text-[#1c5aa8]" aria-hidden>
@@ -73,10 +73,10 @@ function NoteList({ items }: { items: readonly string[] }) {
 export default function GuidePage() {
   return (
     <SubPageLayout sectionId="guide" title="이용안내">
-      <div className="w-[730px]">
+      <div className="w-full">
         {/* 목차 – 원본에는 없던 요소지만, 내용이 길어 앵커 이동을 제공한다 */}
         <div className="mb-[18px] border border-[#e5e5e5] bg-[#fafafa] px-[12px] py-[10px]">
-          <ul className="flex list-none flex-wrap gap-x-[14px] gap-y-[4px] p-0 text-[12px]">
+          <ul className="flex list-none flex-wrap gap-x-[14px] gap-y-[4px] p-0 text-[13px]">
             {GUIDE_SECTIONS.map((s) => (
               <li key={s.id}>
                 <a href={`#${s.id}`} className="text-[#333] hover:text-[#0593B7]">
@@ -90,7 +90,7 @@ export default function GuidePage() {
         {/* 01. 대여 자격 · 필요 서류 */}
         <section id="qualification" className="mb-[26px] scroll-mt-[20px]">
           <SubHeading no="01">대여 자격 · 필요 서류</SubHeading>
-          <p className="mb-[8px] text-[12px] leading-[20px] text-[#666]">{GUIDE_SECTIONS[0].summary}</p>
+          <p className="mb-[8px] text-[13px] leading-[1.7] text-[#666]">{GUIDE_SECTIONS[0].summary}</p>
 
           <InfoTable
             rows={DRIVER_REQUIREMENTS.map((f) => ({
@@ -100,7 +100,7 @@ export default function GuidePage() {
           />
 
           <div className="mt-[14px]" />
-          <div className="mb-[3px] text-[12px] font-bold text-black">대여일 지참 서류</div>
+          <div className="mb-[3px] text-[13px] font-bold text-black">대여일 지참 서류</div>
           <InfoTable
             rows={REQUIRED_DOCUMENTS.map((d) => ({
               label: d.name,
@@ -113,7 +113,7 @@ export default function GuidePage() {
         {/* 02. 보험 안내 */}
         <section id="insurance" className="mb-[26px] scroll-mt-[20px]">
           <SubHeading no="02">보험 안내</SubHeading>
-          <p className="mb-[8px] text-[12px] leading-[20px] text-[#666]">{GUIDE_SECTIONS[1].summary}</p>
+          <p className="mb-[8px] text-[13px] leading-[1.7] text-[#666]">{GUIDE_SECTIONS[1].summary}</p>
 
           <InfoTable
             rows={INSURANCE_ROWS.map((r) => ({
@@ -123,11 +123,14 @@ export default function GuidePage() {
           />
 
           <div className="mt-[14px]" />
-          <div className="mb-[3px] text-[12px] font-bold text-black">자차보험(차량손해면책) 가입 여부에 따른 차이</div>
-          <table className="w-[730px] border-separate border-spacing-[1px] bg-[#E4E4E4] text-[12px] leading-[20px] text-[#666]">
+          <div className="mb-[3px] text-[13px] font-bold text-black">자차보험(차량손해면책) 가입 여부에 따른 차이</div>
+          {/* 3열 비교표 – 좁은 화면에서는 표 자체가 줄어들면 읽을 수 없으므로
+              바깥에 가로 스크롤 영역을 두고 표에 최소 폭을 준다 (페이지 전체는 넘치지 않는다) */}
+          <div className="w-full overflow-x-auto">
+          <table className="w-full min-w-[520px] border-separate border-spacing-[1px] bg-[#E4E4E4] text-[13px] leading-[1.7] text-[#666]">
             <thead>
               <tr>
-                <th className="w-[180px] bg-white p-[5px] text-center font-bold">구분</th>
+                <th className="bg-[#f7f9fb] p-2 text-center font-bold sm:w-[180px]">구분</th>
                 <th className="bg-white p-[5px] text-center font-bold">가입 시</th>
                 <th className="bg-white p-[5px] text-center font-bold">미가입 시</th>
               </tr>
@@ -144,8 +147,9 @@ export default function GuidePage() {
               ))}
             </tbody>
           </table>
+          </div>
 
-          <div className="mt-[12px] text-[12px] font-bold text-[#d61c1c]">보험 적용이 제외되는 경우</div>
+          <div className="mt-[12px] text-[13px] font-bold text-[#d61c1c]">보험 적용이 제외되는 경우</div>
           <NoteList items={INSURANCE_EXCLUSIONS} />
           <NoteList items={INSURANCE_NOTES} />
         </section>
@@ -153,7 +157,7 @@ export default function GuidePage() {
         {/* 03. 이용 절차 */}
         <section id="process" className="mb-[26px] scroll-mt-[20px]">
           <SubHeading no="03">이용 절차</SubHeading>
-          <p className="mb-[8px] text-[12px] leading-[20px] text-[#666]">{GUIDE_SECTIONS[2].summary}</p>
+          <p className="mb-[8px] text-[13px] leading-[1.7] text-[#666]">{GUIDE_SECTIONS[2].summary}</p>
           <InfoTable
             rows={RENTAL_STEPS.map((s) => ({
               label: `${s.no}. ${s.title}`,
@@ -165,21 +169,21 @@ export default function GuidePage() {
         {/* 04. 차량 인수 · 반납 */}
         <section id="handover" className="mb-[26px] scroll-mt-[20px]">
           <SubHeading no="04">차량 인수 · 반납</SubHeading>
-          <p className="mb-[8px] text-[12px] leading-[20px] text-[#666]">{GUIDE_SECTIONS[3].summary}</p>
+          <p className="mb-[8px] text-[13px] leading-[1.7] text-[#666]">{GUIDE_SECTIONS[3].summary}</p>
           <InfoTable
             rows={HANDOVER_FACTS.map((f) => ({
               label: f.label,
               value: [f.value + (f.todo ? "  ※ 확인 필요" : ""), ...(f.note ? [f.note] : [])],
             }))}
           />
-          <div className="mt-[12px] text-[12px] font-bold text-black">반납 전 확인해 주세요</div>
+          <div className="mt-[12px] text-[13px] font-bold text-black">반납 전 확인해 주세요</div>
           <NoteList items={RETURN_CHECKLIST} />
         </section>
 
         {/* 05. 사고 · 고장 시 조치 */}
         <section id="accident" className="mb-[26px] scroll-mt-[20px]">
           <SubHeading no="05">사고 · 고장 시 조치</SubHeading>
-          <p className="mb-[8px] text-[12px] leading-[20px] text-[#666]">{GUIDE_SECTIONS[4].summary}</p>
+          <p className="mb-[8px] text-[13px] leading-[1.7] text-[#666]">{GUIDE_SECTIONS[4].summary}</p>
           <InfoTable
             rows={ACCIDENT_STEPS.map((s) => ({
               label: `${s.no}. ${s.title}`,
@@ -198,7 +202,7 @@ export default function GuidePage() {
         {/* 06. 취소 · 환불 */}
         <section id="cancel" className="mb-[26px] scroll-mt-[20px]">
           <SubHeading no="06">취소 · 환불 규정</SubHeading>
-          <p className="mb-[8px] text-[12px] leading-[20px] text-[#666]">{GUIDE_SECTIONS[5].summary}</p>
+          <p className="mb-[8px] text-[13px] leading-[1.7] text-[#666]">{GUIDE_SECTIONS[5].summary}</p>
           <InfoTable
             rows={CANCEL_ROWS.map((r) => ({
               label: r.timing,
