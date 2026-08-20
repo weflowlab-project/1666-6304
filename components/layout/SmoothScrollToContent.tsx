@@ -1,53 +1,64 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { TARGET_HASH, scrollToContent, stopScroll } from "@/components/layout/scrollToContent";
 
 /**
- * "#content" 로 들어왔을 때 맨 위에서 본문까지 부드럽게 스크롤해 주는 컴포넌트
+ * 다른 페이지에서 "#content" 로 들어왔을 때, 맨 위에서 본문까지 부드럽게 내려가게 한다.
  *
- * 왜 필요한가
- *   <Link href="/guide#content"> 만 쓰면 브라우저·Next 가 이동 직후 곧바로 본문 위치로
- *   "점프"해 버려서, 사용자는 상단(비주얼·배너)을 보지 못한 채 갑자기 중간에 떨어진다.
- *   그래서 링크에는 scroll={false} 를 줘 자동 스크롤을 막고,
- *   여기서 [맨 위로 이동 → 잠시 후 부드럽게 본문으로] 순서로 직접 처리한다.
+ * 링크에 scroll={false} 를 줘 Next 의 자동 점프를 막아 두었기 때문에,
+ * 실제 이동은 여기서 처리한다. (이동 시간·가감속은 scrollToContent 에 정의)
  *
- * 대상은 "#content" 하나로 한정한다.
- * 이용안내 페이지 안의 목차(#qualification 등)는 같은 페이지 내 이동이라
- * CSS scroll-behavior 로 이미 부드럽게 동작하므로 건드리지 않는다.
+ * 순서: 맨 위로 즉시 이동 → 한 프레임 그려진 뒤 → 본문까지 부드럽게.
+ * "기다렸다가 툭 튄 다음 움직이는" 느낌이 나지 않도록 대기 시간을 두지 않는다.
+ *
+ * 서브 페이지끼리 이동할 때는 이 컴포넌트가 다시 마운트되지 않으므로
+ * 경로가 바뀔 때마다 다시 실행되도록 pathname 을 의존성으로 둔다.
+ *
+ * ※ 이미 같은 페이지에 있을 때 배너를 누른 경우는 TopBanners 가 직접 처리한다.
  */
-const TARGET_HASH = "#content";
-
 export default function SmoothScrollToContent() {
+  const pathname = usePathname();
+
   useEffect(() => {
+    let raf1 = 0;
+    let raf2 = 0;
+
     const run = () => {
       if (window.location.hash !== TARGET_HASH) return;
-      const el = document.querySelector(TARGET_HASH);
-      if (!el) return;
 
-      // 링크에 scroll={false} 를 줬기 때문에 이전 페이지의 스크롤 위치가 남아 있을 수 있다.
-      // 먼저 즉시 맨 위로 올린 뒤, 한 프레임 쉬고 본문까지 부드럽게 내려간다.
-      window.scrollTo({ top: 0, behavior: "instant" });
+      // ① 맨 위로는 "즉시" 올린다.
+      //    예전에는 180ms 기다린 뒤 올렸는데, 그 사이 이전 페이지의 스크롤 위치가
+      //    잠깐 보였다가 툭 튀는 탓에 멈칫하는 것처럼 느껴졌다.
+      window.scrollTo(0, 0);
 
-      const timer = setTimeout(() => {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 220);
-      return timer;
+      // ② 화면이 실제로 한 번 그려진 뒤 애니메이션을 시작한다.
+      //    고정 시간(setTimeout)이 아니라 프레임 기준이라 기기 성능에 맞춰 자연스럽게 이어진다.
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => scrollToContent());
+      });
     };
 
-    let timer = run();
+    run();
 
-    // 이미 같은 페이지에 있을 때 다시 눌린 경우(해시만 바뀜)도 처리한다
-    const onHashChange = () => {
-      if (timer) clearTimeout(timer);
-      timer = run();
-    };
-    window.addEventListener("hashchange", onHashChange);
+    // 같은 페이지에서 해시만 바뀌는 경우
+    window.addEventListener("hashchange", run);
+    // 사용자가 직접 조작하면 애니메이션을 즉시 멈춘다 (조작이 항상 우선)
+    window.addEventListener("wheel", stopScroll, { passive: true });
+    window.addEventListener("touchstart", stopScroll, { passive: true });
+    window.addEventListener("keydown", stopScroll);
 
     return () => {
-      if (timer) clearTimeout(timer);
-      window.removeEventListener("hashchange", onHashChange);
+      stopScroll();
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      window.removeEventListener("hashchange", run);
+      window.removeEventListener("wheel", stopScroll);
+      window.removeEventListener("touchstart", stopScroll);
+      window.removeEventListener("keydown", stopScroll);
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

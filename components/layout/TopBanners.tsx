@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { scrollToContent } from "@/components/layout/scrollToContent";
 
 /**
  * 콘텐츠 상단 안내 배너 (홈·모든 서브 페이지 공통)
@@ -12,6 +16,11 @@ import Link from "next/link";
  * 반응형: 모바일 1열 → sm 이상 2열
  */
 export default function TopBanners() {
+  const pathname = usePathname();
+  // 이미 이용안내 페이지를 보고 있는 경우에는 페이지 이동 없이 바로 아래로 스크롤한다.
+  // (맨 위로 튕겼다가 내려가면 어색하므로 지금 보고 있는 위치에서 이어서 내려간다)
+  const onGuidePage = pathname === "/guide";
+
   return (
     <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
       {/* 영업 지역 안내 */}
@@ -30,10 +39,17 @@ export default function TopBanners() {
 
       {/* 이용안내 링크 */}
       {/* #content 로 이동하되 Next 의 자동 스크롤(즉시 점프)은 끈다.
-          맨 위에서 본문까지 부드럽게 내려가는 처리는 SmoothScrollToContent 가 맡는다. */}
+          맨 위에서 본문까지 부드럽게 내려가는 처리는 SmoothScrollToContent 가 맡는다.
+          이 배너는 홈뿐 아니라 모든 서브 페이지 상단에도 쓰이므로,
+          어느 페이지에서 눌러도 같은 방식으로 동작한다. */}
       <Link
         href="/guide#content"
         scroll={false}
+        onClick={(e) => {
+          if (!onGuidePage) return;
+          e.preventDefault();
+          scrollToContent();
+        }}
         className="flex flex-col justify-between rounded-[4px] border border-[#9ccbee] bg-[#f4f9fe] px-4 py-4 text-[12px] leading-[1.6] text-[#444] transition-colors hover:bg-[#eaf4fd] max-md:text-[14px]"
       >
         <span>
