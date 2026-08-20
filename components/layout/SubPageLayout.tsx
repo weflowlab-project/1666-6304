@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import CallBox from "@/components/layout/CallBox";
 import TopBanners from "@/components/layout/TopBanners";
+import SmoothScrollToContent from "@/components/layout/SmoothScrollToContent";
 import { getSection, type MenuSection } from "@/lib/menu";
 
 /**
@@ -34,6 +35,9 @@ export default function SubPageLayout({
 
   return (
     <div className="w-full">
+      {/* "#content" 로 들어오면 맨 위에서 본문까지 부드럽게 내려간다 */}
+      <SmoothScrollToContent />
+
       {/* ── 서브 비주얼 (원본 sub_flash_01.jpg 1000x196 자리) ── */}
       <section className="relative isolate flex min-h-[140px] w-full items-center justify-center overflow-hidden bg-[#eef3f8] px-4 py-10 text-center sm:min-h-[170px]">
         {/* 배경 – 이미지가 들어갈 자리 안내 */}

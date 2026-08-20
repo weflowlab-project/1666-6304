@@ -29,9 +29,11 @@ export default function TopBanners() {
       </div>
 
       {/* 이용안내 링크 */}
-      {/* #content: 이용안내 페이지의 상단 비주얼·배너를 건너뛰고 본문부터 보이게 한다 */}
+      {/* #content 로 이동하되 Next 의 자동 스크롤(즉시 점프)은 끈다.
+          맨 위에서 본문까지 부드럽게 내려가는 처리는 SmoothScrollToContent 가 맡는다. */}
       <Link
         href="/guide#content"
+        scroll={false}
         className="flex flex-col justify-between rounded-[4px] border border-[#9ccbee] bg-[#f4f9fe] px-4 py-4 text-[12px] leading-[1.6] text-[#444] transition-colors hover:bg-[#eaf4fd] max-md:text-[14px]"
       >
         <span>
