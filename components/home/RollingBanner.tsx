@@ -14,9 +14,8 @@ import { useEffect, useRef, useState } from "react";
  *
  * 변경
  *   · 내용: 대출상품 4종 → 보유 차급 4종
- *   · 폭: 467px 고정 → 유동(w-full). 모바일 대응.
+ *   · 폭: 467px 고정 → 위쪽 배너와 같은 2열 그리드의 한 칸
  *   · 이미지 자리 표시 제거 (실제 사진을 받으면 배경에 <Image> 를 깔면 된다)
- *   · 요금 비공개 정책이라 금액 대신 "전화 문의" 안내를 넣는다
  */
 const BANNERS = [
   {
@@ -76,10 +75,10 @@ export default function RollingBanner() {
   const banner = BANNERS[index];
 
   return (
-    <div className="w-full min-w-0 xl:flex-1">
+    <div className="flex w-full min-w-0 flex-col">
       {/* 상단바 – 원본 center_banner_top.gif 자리 */}
-      <div className="flex h-[40px] items-center justify-between border-b-2 border-[#62abe9] px-2">
-        <span className="text-[13px] font-bold text-[#1c5aa8]">보유 차량 안내</span>
+      <div className="flex h-[46px] items-center justify-between border-b-2 border-[#62abe9] px-2">
+        <span className="text-[16px] font-bold text-[#1c5aa8] md:text-[17px]">보유 차량 안내</span>
         <div className="flex gap-[3px]">
           {BANNERS.map((b, i) => (
             <button
@@ -101,9 +100,9 @@ export default function RollingBanner() {
       </div>
 
       {/* 배너 본문 – 클릭 시 차급 페이지로 */}
-      <Link href={banner.href} className="block" aria-label={banner.title}>
+      <Link href={banner.href} className="flex flex-1 flex-col" aria-label={banner.title}>
         <div
-          className="min-h-[150px] bg-[#f7f9fb] px-4 py-4 transition-opacity"
+          className="flex min-h-[150px] flex-1 flex-col bg-[#f7f9fb] px-4 py-4 transition-opacity"
           style={{ opacity: fading ? 0 : 1, transitionDuration: `${FADE_MS / 2}ms` }}
         >
           <p className="text-[17px] font-bold text-[#1c5aa8]">{banner.title}</p>
@@ -112,9 +111,10 @@ export default function RollingBanner() {
               <p key={d}>{d}</p>
             ))}
           </div>
-          {/* 요금 비공개 – 금액 대신 전화 안내 */}
-          <p className="mt-2 text-[13px] text-[#d61c1c]">
-            <b>대여 요금</b> : 차종·기간에 따라 상이 (전화 문의)
+          {/* 배너 전체가 차급 페이지로 가는 링크라, 눌러 볼 수 있다는 것을 알려 준다 */}
+          <p className="mt-auto inline-flex items-center gap-1 pt-3 text-[14px] font-bold text-[#d61c1c]">
+            차량 · 이용 조건 자세히 보기
+            <span aria-hidden>→</span>
           </p>
         </div>
       </Link>

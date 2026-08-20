@@ -16,7 +16,7 @@ import type { MenuSection } from "@/lib/menu";
  *   · 190px 고정 → 반응형
  *
  * 반응형 처리
- *   · lg 이상: 원본처럼 세로 사이드바
+ *   · lg 이상: 원본처럼 세로 사이드바 (스크롤 시 따라오도록 sticky)
  *   · lg 미만: 섹션 타이틀 + 하위 메뉴를 가로 칩 목록으로 보여준다.
  *     좁은 화면에서 세로 메뉴를 본문 위에 두면 본문이 한참 아래로 밀리기 때문이다.
  *     전화 상담 박스는 본문 아래(SubPageLayout)에서 따로 보여준다.
@@ -26,7 +26,8 @@ export default function Sidebar({ section }: { section: MenuSection }) {
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <aside className="w-full lg:w-[190px] lg:shrink-0">
+    // lg 이상에서 스크롤을 내려도 좌측 메뉴·전화 상담 박스가 따라온다 (부모가 items-start 라 동작)
+    <aside className="w-full lg:sticky lg:top-4 lg:w-[190px] lg:shrink-0">
       {/* 섹션 타이틀 – 원본 title_0X.gif 자리 */}
       <p className="rounded-t-[4px] border border-[#d6d6d6] bg-[#f7f9fb] py-3 text-center text-[16px] font-bold tracking-wider text-[#1c5aa8] lg:py-4 lg:text-[17px]">
         {section.sidebarTitle}
@@ -59,14 +60,14 @@ export default function Sidebar({ section }: { section: MenuSection }) {
       {/* 하위 메뉴 – lg 미만 가로 칩 (하위가 2개 이상일 때만 의미가 있다) */}
       {section.children.length > 1 && (
         <nav
-          className="flex flex-wrap gap-2 rounded-b-[4px] border-x border-b border-[#d6d6d6] bg-white p-3 lg:hidden"
+          className="flex flex-wrap justify-center gap-2 rounded-b-[4px] border-x border-b border-[#d6d6d6] bg-white p-3 lg:hidden"
           aria-label={`${section.label} 하위 메뉴`}
         >
           {section.children.map((child) => (
             <Link
               key={child.href}
               href={child.href}
-              className={`inline-block rounded-full border px-3 py-1 text-[13px] ${
+              className={`inline-block rounded-full border px-3.5 py-1.5 text-[14px] ${
                 isActive(child.href)
                   ? "border-[#0593B7] bg-[#eaf4fd] font-bold text-[#0593B7]"
                   : "border-[#ddd] text-[#666]"

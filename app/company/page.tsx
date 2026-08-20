@@ -24,7 +24,7 @@ export default function CompanyPage() {
       <div className="w-full">
         {/* 인사말 */}
         <h2 className="text-[19px] font-bold leading-[1.5] text-[#2674BE] sm:text-[22px]">
-          “안녕하세요 {SITE.name} 입니다”
+          “안녕하세요 {SITE.name}입니다”
         </h2>
 
         <div className="mt-4 space-y-3 text-[14px] leading-[1.9] text-[#535353] sm:text-[15px]">
@@ -32,10 +32,10 @@ export default function CompanyPage() {
           <p>저희 회사는 오랜 기간 자동차 업계에서 쌓은 경험을 바탕으로 운영되고 있습니다.</p>
           <p>
             짧게는 며칠, 길게는 수년까지 필요하신 기간과 용도는 모두 다릅니다. 정해진 상품을 권하기보다 고객님의
-            상황을 먼저 듣고 알맞은 차량을 찾아드립니다.
+            상황을 먼저 듣고 알맞은 차량을 찾아 드립니다.
           </p>
           <p>
-            또한 저희 <strong className="font-bold text-[#D00000]">“{SITE.name}”</strong> 는 차량 상태 관리와 신속한
+            또한 저희 <strong className="font-bold text-[#D00000]">“{SITE.name}”</strong>는 차량 상태 관리와 신속한
             응대를 약속드립니다.
           </p>
           <p>궁금한 점이 있으시면 언제든 편하게 전화 주십시오. 감사합니다.</p>
@@ -47,7 +47,7 @@ export default function CompanyPage() {
         <div className="mt-8 rounded-[4px] border border-[#e5e5e5] bg-[#fafafa] px-4 py-3 text-[13px] leading-[1.7] text-[#666]">
           <b className="text-[#1c5aa8]">영업 지역</b>
           <br />
-          경기권(성남/분당/수원/안양/안산/의정부/일산/평택/오산/화성/천안 등), 서울 전지역
+          경기권(성남/분당/수원/안양/안산/의정부/일산/평택/오산/화성/천안 등), 서울 전 지역
           <br />
           지역에 따라 차량 인수 방법이 다를 수 있습니다. 자세한 사항은 전화로 확인해 주세요.
         </div>

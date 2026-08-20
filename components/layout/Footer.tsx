@@ -32,7 +32,7 @@ export default function Footer() {
           >
             {SITE.name}
           </Link>
-          <div className="text-[12px] leading-[1.8] text-[#777]">
+          <div className="text-[12px] leading-[1.8] text-[#777] max-md:text-[13px]">
             상호 : {SITE.name} / 대표자 : {b.ceo} / 사업자등록번호 : {b.regNo}
             <br />
             주소 : {b.address} / 자동차대여사업 등록번호 : {b.rentalLicense}
@@ -41,18 +41,6 @@ export default function Footer() {
             <br />
             Copyright(c) {new Date().getFullYear()} {SITE.name} All rights reserved.
           </div>
-        </div>
-
-        {/* 안내 문구 – 요금 비공개 정책이라 "전화 문의" 안내로 대체 */}
-        <div className="mt-6 border-t border-[#eee] pt-4 text-[12px] leading-[1.8] text-[#666] md:pl-[220px]">
-          <p>
-            대여 요금은 차종과 이용 기간, 보험 조건에 따라 달라집니다. 전화 주시면 조건에 맞는 차량과 요금을 바로
-            안내해 드립니다.
-          </p>
-          <p className="mt-[10px]">
-            차량 보유 현황은 수시로 변동되며, 홈페이지에 표시된 차량이 대여 중일 수 있습니다. 이용 예정일과 차종을
-            말씀해 주시면 가능 여부를 확인해 드립니다.
-          </p>
         </div>
       </div>
     </footer>

@@ -54,7 +54,7 @@ export const CAR_CATEGORIES: Record<CarCategoryId, CarCategory> = {
     id: "sedan",
     label: "중형 · 대형",
     title: "중형 · 대형 세단",
-    description: "장거리 주행과 비즈니스 미팅에 적합한 차급입니다. 승차감과 정숙성을 중시하는 분께 권해드립니다.",
+    description: "장거리 주행과 비즈니스 미팅에 적합한 차급입니다. 승차감과 정숙성을 중시하는 분께 권해 드립니다.",
     cars: [
       { name: "중형 세단 A", seats: 5, fuel: "가솔린", transmission: "자동", options: ["내비게이션", "통풍시트"] },
       { name: "중형 세단 B", seats: 5, fuel: "하이브리드", transmission: "자동", options: ["내비게이션", "통풍시트", "썬루프"] },

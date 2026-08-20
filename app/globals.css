@@ -67,6 +67,18 @@
     max-width: 100%;
   }
 
+  /* ── 모바일 전용 조정 (767px 이하) ──────────────────────────
+     PC 화면에는 영향을 주지 않는다. 데스크톱 값을 바꾸지 않고
+     모바일만 손보기 위해 미디어 쿼리로 분리했다. */
+  @media (max-width: 767px) {
+    html,
+    body {
+      /* 14px 은 모바일에서 작아 한 단계 키운다 */
+      font-size: 15px;
+      line-height: 1.75;
+    }
+  }
+
   /* 원본 폼 요소 기본 스타일: 1px #DADADA 테두리 */
   input[type="text"],
   input[type="password"],

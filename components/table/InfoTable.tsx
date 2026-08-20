@@ -28,19 +28,26 @@ export type InfoSection = {
   rows: InfoRow[];
 };
 
-/** 2열 표 – PC: 좌 180px 항목 / 우 내용, 모바일: 위아래로 쌓임 */
+/**
+ * 2열 표
+ *   · PC(sm 이상): 좌 180px 항목 / 우 내용 – 원본 조건표와 같은 배치
+ *   · 모바일(sm 미만): 항목 위 / 내용 아래로 쌓이고, 항목에 파란 세로선을 붙여 구분
+ */
 export function InfoTable({ rows }: { rows: InfoRow[] }) {
   return (
     <dl className="w-full overflow-hidden rounded-[4px] border border-[#E4E4E4] text-[13px] leading-[1.7] text-[#666]">
       {rows.map((row, i) => (
         <div
           key={row.label}
-          className={`flex flex-col sm:flex-row ${i > 0 ? "border-t border-[#E4E4E4]" : ""}`}
+          className={`flex flex-col sm:flex-row ${i > 0 ? "border-t border-[#E4E4E4] max-sm:border-t-[6px] max-sm:border-t-[#f0f3f7]" : ""}`}
         >
-          <dt className="bg-[#f7f9fb] px-3 py-2 font-bold text-[#444] sm:w-[180px] sm:shrink-0 sm:border-r sm:border-[#E4E4E4] sm:text-center">
+          {/* 모바일(sm 미만)에서는 항목이 위, 내용이 아래로 쌓인다.
+              그냥 쌓기만 하면 둘 다 회색 글씨라 구분이 안 돼서,
+              모바일에서만 항목에 파란 세로선과 진한 글씨를 넣어 구분을 준다. */}
+          <dt className="bg-[#f7f9fb] px-3 py-2 font-bold text-[#444] max-sm:border-l-[3px] max-sm:border-l-[#1c5aa8] max-sm:text-[15px] max-sm:text-[#1c3f7a] sm:w-[180px] sm:shrink-0 sm:border-r sm:border-[#E4E4E4] sm:text-center">
             {row.label}
           </dt>
-          <dd className="m-0 min-w-0 flex-1 bg-white px-3 py-2">
+          <dd className="m-0 min-w-0 flex-1 bg-white px-3 py-2 max-sm:px-4 max-sm:pb-3.5 max-sm:pt-2.5 max-sm:text-[15px] max-sm:leading-[1.75]">
             {row.value.map((line, j) => (
               <span key={j} className="block">
                 {line || " "}

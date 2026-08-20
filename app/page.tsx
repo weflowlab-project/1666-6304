@@ -2,7 +2,6 @@ import CallBox from "@/components/layout/CallBox";
 import TopBanners from "@/components/layout/TopBanners";
 import RollingBanner from "@/components/home/RollingBanner";
 import RightBanners from "@/components/home/RightBanners";
-import HomeNotice from "@/components/home/HomeNotice";
 import { SITE } from "@/lib/menu";
 
 /**
@@ -11,7 +10,7 @@ import { SITE } from "@/lib/menu";
  * 원본 /default/index.php 의 구성을 이어받되, 폭을 고정 → 반응형으로 바꿨다.
  *
  *   1. 히어로 (원본 main_visual_wepix.jpg 1000x298 자리)
- *   2. 본문 2컬럼 – 좌: 전화 상담 박스 / 우: 3단 배너 + 롤링 배너 + 안내 블록
+ *   2. 본문 2컬럼 – 좌: 전화 상담 박스 / 우: 안내 배너 + 롤링 배너 + 바로가기
  *
  * 반응형 처리
  *   · lg 이상: 좌(상담 박스) + 우(콘텐츠) 2컬럼 – 원본 배치 유지
@@ -56,18 +55,21 @@ export default function Home() {
           <div className="order-1 min-w-0 flex-1 lg:order-2">
             <TopBanners />
 
-            <div className="mt-5 flex flex-col gap-5 xl:flex-row xl:items-start">
+            {/* 보유 차량 안내 · 이용 절차 안내
+                위쪽 배너(TopBanners)와 똑같은 2열 그리드·같은 gap 을 써서
+                위 두 박스와 아래 두 박스의 좌우 폭이 정확히 맞도록 한다 (전체 2×2 배치).
+                grid 의 기본 items-stretch 덕분에 좌우 높이도 자동으로 같아진다. */}
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <RollingBanner />
               <RightBanners />
             </div>
-
-            <div className="mt-6">
-              <HomeNotice />
-            </div>
           </div>
 
-          {/* 전화 상담 박스 (모바일에서는 아래로) */}
-          <div className="order-2 flex justify-center lg:order-1 lg:w-[200px] lg:shrink-0 lg:justify-start">
+          {/* 전화 상담 박스
+              PC: 원본처럼 좌측 사이드에 놓이고, 스크롤을 내려도 따라오도록 고정한다(sticky).
+                  상단 여백 16px 을 둬 헤더 아래에 자연스럽게 붙는다.
+              모바일: 본문 아래(푸터 바로 위)로 내려가며, 이때는 따라다니지 않는다. */}
+          <div className="order-2 flex justify-center lg:sticky lg:top-4 lg:order-1 lg:w-[200px] lg:shrink-0 lg:justify-start">
             <CallBox />
           </div>
         </div>

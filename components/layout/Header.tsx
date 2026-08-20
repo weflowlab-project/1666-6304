@@ -9,7 +9,8 @@ import { MENU, SITE } from "@/lib/menu";
  * 상단 헤더
  *
  * 원본(대부업 사이트)은 top_menu_img.gif 1000x84 통이미지 + 이미지맵이었다.
- * 파란 메뉴바(#96d2fc) · 남색 로고 · 빨간 전화번호라는 원본 정체성은 유지하고
+ * 남색 메뉴바 · 남색 로고 · 빨간 전화번호.
+ * 메뉴바는 원본의 하늘색(#96d2fc)에서 로고와 같은 네이비(#1c3f7a)로 바꿨다.
  * 구조만 정리했다.
  *
  * 변경
@@ -60,7 +61,7 @@ export default function Header() {
 
         {/* ── PC 메뉴바 – 남는 공간을 채우도록 늘린다 ── */}
         <nav className="hidden min-w-0 flex-1 md:block" aria-label="주 메뉴">
-          <ul className="flex h-[34px] items-stretch justify-around rounded-[4px] bg-[#96d2fc] px-2">
+          <ul className="flex h-[34px] items-stretch justify-around rounded-[4px] bg-[#1c3f7a] px-2">
             {MENU.map((section) => {
               const hasChildren = section.children.length > 1;
               return (
@@ -112,7 +113,7 @@ export default function Header() {
 
         {/* ── PC 전화 안내 ── */}
         <div className="hidden shrink-0 flex-col items-center md:flex">
-          <span className="text-[11px] font-bold text-[#e0322e]">전화상담 안내</span>
+          <span className="text-[11px] font-bold text-[#e0322e]">전화 상담 안내</span>
           <a href={telHref} className="text-[21px] font-extrabold leading-tight tracking-tight text-[#1c3f7a]">
             {SITE.phone}
           </a>

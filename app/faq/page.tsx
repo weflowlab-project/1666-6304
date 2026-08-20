@@ -23,7 +23,7 @@ export default function FaqPage() {
   return (
     <SubPageLayout sectionId="faq" title="자주묻는질문">
       <div className="w-full">
-        <p className="mb-[14px] text-[12px] leading-[20px] text-[#666]">
+        <p className="mb-[14px] text-[12px] leading-[20px] text-[#666] max-md:text-[15px] max-md:leading-[1.75]">
           전화 주시기 전에 자주 문의하시는 내용을 정리했습니다. 요금은 차종과 이용 기간, 보험 조건에 따라 달라져
           전화로만 안내해 드리고 있습니다.
         </p>

@@ -9,11 +9,11 @@ import { SITE } from "@/lib/menu";
  *
  * 원본 사이트(1666-6304.com)는 최상위가 <frameset> 이고 그 안의 default/index.php 가 실제 화면이다.
  * 모든 페이지 공통으로 상단 헤더(84px) + 하단 푸터(441px)가 붙으므로 루트 레이아웃에서 렌더링한다.
- * 페이지 폭은 1000px 고정, 좌우 여백은 원본이 배경 이미지(top_bg.gif 등)로 채우던 것을 흰색으로 대체.
+ * 폭은 반응형(최대 1000px)이며, 원본이 배경 이미지로 채우던 좌우 여백은 흰색으로 대체했다.
  */
 export const metadata: Metadata = {
   title: SITE.title,
-  description: `${SITE.name} – ${SITE.slogan}. 빠르고 간편한 자동차대출, 즉시대출 신용조회 무! ${SITE.phone}`,
+  description: `${SITE.name} – ${SITE.slogan}. 경기·서울 전 지역 렌터카 상담. 차종과 이용 기간만 말씀해 주시면 바로 안내해 드립니다. 전화 ${SITE.phone}`,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Header />
         {/* 페이지 본문 */}
         <main className="flex-1">{children}</main>
-        {/* 하단 푸터: 회사정보 + 대부업 고지 */}
+        {/* 하단 푸터: 회사정보 + 이용 안내 */}
         <Footer />
       </body>
     </html>

@@ -58,7 +58,7 @@ export default function FaqAccordion() {
         <section key={group.category.id} className="mb-[20px]">
           {/* 카테고리 소제목 – 원본 서브 페이지의 "- 소제목" 스타일 */}
           <div className="mb-[5px] text-[13px] font-bold text-black">- {group.category.label}</div>
-          <p className="mb-[6px] text-[12px] text-[#999]">{group.category.description}</p>
+          <p className="mb-[6px] text-[12px] text-[#999] max-md:text-[13px]">{group.category.description}</p>
 
           <ul className="list-none border-t border-[#d6d6d6] p-0">
             {group.items.map((item) => (
@@ -106,7 +106,7 @@ function FaqRow({ item, open, onToggle }: { item: FaqItem; open: boolean; onTogg
           className="flex w-full cursor-pointer items-start gap-[8px] bg-white px-[8px] py-[10px] text-left"
         >
           <span className="text-[13px] font-bold text-[#1c5aa8]">Q</span>
-          <span className={`flex-1 text-[12px] leading-[20px] ${open ? "font-bold text-[#1c5aa8]" : "text-[#333]"}`}>
+          <span className={`flex-1 text-[12px] leading-[20px] max-md:text-[15px] max-md:leading-[1.6] ${open ? "font-bold text-[#1c5aa8]" : "text-[#333]"}`}>
             {item.q}
           </span>
           <span className="text-[11px] text-[#999]" aria-hidden>
@@ -121,7 +121,7 @@ function FaqRow({ item, open, onToggle }: { item: FaqItem; open: boolean; onTogg
             <span className="text-[13px] font-bold text-[#d61c1c]">A</span>
             <div className="flex-1">
               {item.a.map((p, i) => (
-                <p key={i} className={`text-[12px] leading-[20px] text-[#555] ${i > 0 ? "mt-[8px]" : ""}`}>
+                <p key={i} className={`text-[12px] leading-[20px] text-[#555] max-md:text-[15px] max-md:leading-[1.75] ${i > 0 ? "mt-[8px]" : ""}`}>
                   {p}
                 </p>
               ))}
