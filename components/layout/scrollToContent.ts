@@ -1,78 +1,42 @@
 /**
  * 본문("#content")까지 부드럽게 스크롤하는 공통 동작
  *
- * 브라우저 기본 기능(scrollIntoView({behavior:"smooth"}))을 쓰지 않는 이유
- *   이동 시간과 가감속을 브라우저가 정하는데 표준값이 없어 엔진마다 다르다.
- *     · iOS(WebKit)   : 짧고 빠르게 끝난다 → "너무 빨리 내려간다"
- *     · 안드로이드(Blink): 거리에 비례해 길어지고, 메인 스레드가 바쁘면 끊겨 보인다
- *   그래서 기기와 무관하게 같은 느낌이 되도록 시간과 가감속을 직접 정한다.
+ * ⚠️ 여기서 겪은 문제 두 가지 (다시 건드릴 때 주의)
  *
- * 두 곳에서 함께 쓴다.
- *   · SmoothScrollToContent – 다른 페이지에서 "#content" 로 들어왔을 때
- *   · TopBanners           – 이미 그 페이지에 있을 때 "이용안내 보기" 를 누른 경우
- *   한 번에 하나의 애니메이션만 돌면 되므로 상태를 모듈 수준에 둔다.
+ *  1) requestAnimationFrame 으로 직접 애니메이션을 그리면 모바일에서 뚝뚝 끊긴다.
+ *     매 프레임 window.scrollTo 를 부르는 일은 메인 스레드에서 돌기 때문에,
+ *     하이드레이션처럼 메인 스레드가 바쁜 순간과 겹치면 프레임이 밀린다.
+ *     반면 브라우저 기본 스크롤(behavior:"smooth")은 컴포지터에서 처리돼 훨씬 매끄럽다.
+ *     → 기기별 속도가 조금 달라지더라도 기본 기능을 쓰는 편이 낫다.
+ *
+ *  2) globals.css 에 html { scroll-behavior: smooth } 가 걸려 있어서,
+ *     맨 위로 올리려고 window.scrollTo(0, 0) 을 부르면 그것마저 "애니메이션"으로 실행된다.
+ *     그 상태에서 곧바로 본문으로 또 스크롤하면 두 동작이 겹쳐 끊기는 것처럼 보인다.
+ *     → 맨 위로 올릴 때는 behavior:"instant" 로 CSS 설정을 눌러 준다.
  */
 export const TARGET_HASH = "#content";
 
-/** 이동에 걸리는 시간(ms) – 기기와 무관하게 동일하다 */
-const DURATION = 620;
 /** 본문 위에 남길 여백(px) */
 const OFFSET = 16;
 
-let raf = 0;
-let animating = false;
-
-/** 처음엔 천천히, 중간에 빠르게, 끝에 다시 천천히 (easeInOutCubic) */
-function ease(t: number) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+/** 목표 위치 계산 */
+function targetTop(el: Element) {
+  return el.getBoundingClientRect().top + window.scrollY - OFFSET;
 }
 
-/** 진행 중인 스크롤을 멈춘다 (사용자가 직접 조작하면 즉시 중단) */
-export function stopScroll() {
-  if (raf) cancelAnimationFrame(raf);
-  raf = 0;
-  animating = false;
-}
-
-/** 현재 위치에서 목표 위치까지 정해진 시간 동안 이동 */
-function animateTo(targetY: number) {
-  stopScroll();
-  const startY = window.scrollY;
-  const distance = targetY - startY;
-  if (Math.abs(distance) < 2) return;
-
-  animating = true;
-  const startedAt = performance.now();
-
-  const step = (now: number) => {
-    if (!animating) return;
-    const progress = Math.min(1, (now - startedAt) / DURATION);
-    window.scrollTo(0, startY + distance * ease(progress));
-    if (progress < 1) raf = requestAnimationFrame(step);
-    else stopScroll();
-  };
-  raf = requestAnimationFrame(step);
+/** 애니메이션 없이 즉시 맨 위로 (CSS 의 scroll-behavior:smooth 를 무시한다) */
+export function jumpToTop() {
+  window.scrollTo({ top: 0, behavior: "instant" });
 }
 
 /**
- * 본문까지 스크롤한다.
- * @param fromTop true 면 먼저 맨 위로 올린 뒤 내려간다.
- *   다른 페이지에서 막 들어온 경우에 쓴다(이전 페이지의 스크롤 위치가 남아 있을 수 있어서).
- *   이미 같은 페이지를 보고 있을 때는 false 로 두어, 지금 보고 있는 위치에서 자연스럽게 이어간다.
+ * 본문까지 부드럽게 스크롤한다.
+ * 동작 최소화를 선호하는 사용자에게는 애니메이션 없이 바로 이동한다.
  */
-export function scrollToContent({ fromTop = false }: { fromTop?: boolean } = {}) {
+export function scrollToContent() {
   const el = document.querySelector(TARGET_HASH);
   if (!el) return;
 
-  if (fromTop) window.scrollTo(0, 0);
-
-  const targetY = () => el.getBoundingClientRect().top + window.scrollY - OFFSET;
-
-  // 동작 최소화를 선호하는 사용자에게는 애니메이션 없이 바로 이동
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    window.scrollTo(0, targetY());
-    return;
-  }
-
-  animateTo(targetY());
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top: targetTop(el), behavior: reduced ? "instant" : "smooth" });
 }
