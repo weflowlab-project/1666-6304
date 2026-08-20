@@ -18,7 +18,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className="h-full">
+    // data-scroll-behavior: globals.css 의 scroll-behavior:smooth 를
+    // 라우트 전환에서는 적용하지 않도록 Next 에 알리는 표시
+    <html lang="ko" data-scroll-behavior="smooth" className="h-full">
       <body className="flex min-h-full flex-col bg-white">
         {/* 상단 헤더: 로고 + 메뉴 + 고객센터 번호 */}
         <Header />

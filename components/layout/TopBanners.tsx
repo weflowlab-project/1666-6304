@@ -29,8 +29,9 @@ export default function TopBanners() {
       </div>
 
       {/* 이용안내 링크 */}
+      {/* #content: 이용안내 페이지의 상단 비주얼·배너를 건너뛰고 본문부터 보이게 한다 */}
       <Link
-        href="/guide"
+        href="/guide#content"
         className="flex flex-col justify-between rounded-[4px] border border-[#9ccbee] bg-[#f4f9fe] px-4 py-4 text-[12px] leading-[1.6] text-[#444] transition-colors hover:bg-[#eaf4fd] max-md:text-[14px]"
       >
         <span>

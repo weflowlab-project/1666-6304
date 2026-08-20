@@ -62,7 +62,13 @@ export default function SubPageLayout({
             <TopBanners />
 
             {/* 파란 테두리 콘텐츠 박스 – 원본의 2px #3281C3 테두리 유지 */}
-            <section className="mt-4 w-full rounded-[4px] border-2 border-[#3281C3] bg-white px-4 py-4 md:px-5 md:py-5">
+            {/* id="content": 다른 페이지에서 "…#content" 로 들어오면
+                상단 비주얼·배너를 건너뛰고 본문부터 보이도록 하는 앵커.
+                scroll-mt 로 위쪽에 약간의 여백을 남긴다. */}
+            <section
+              id="content"
+              className="mt-4 w-full scroll-mt-4 rounded-[4px] border-2 border-[#3281C3] bg-white px-4 py-4 md:px-5 md:py-5"
+            >
               {/* 제목 + 부제 */}
               <div className="border-b border-[#eee] pb-3">
                 <h1 className="flex items-center gap-1.5 text-[18px] font-bold text-black md:text-[20px]">

@@ -28,6 +28,13 @@
 }
 
 @layer base {
+  /* 앵커(#) 이동을 부드럽게. 동작 최소화를 선호하는 사용자에게는 적용하지 않는다 */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   html,
   body {
     background: var(--background);
